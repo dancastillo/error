@@ -1,0 +1,63 @@
+{
+  "name": "@dancastillo/error",
+  "version": "0.0.1",
+  "description": "A small utility for generating consistent errors",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "homepage": "https://github.com/dancastillo/error#readme",
+  "bugs": {
+    "url": "https://github.com/dancastillo/error/issues"
+  },
+  "author": "Dan Castillo<dancastillo99@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dancastillo/error.git"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "error",
+    "utility"
+  ],
+  "scripts": {
+    "test": "tsc --project tsconfig.test.json && borp --coverage --check-coverage --lines 100",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "lint": "eslint ./src",
+    "prepare": "husky",
+    "build": "tsup",
+    "check-exports": "attw --pack .",
+    "prepublish": "pnpm build && pnpm check-exports && pnpm lint && pnpm format && pnpm test"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.16.1",
+    "@changesets/cli": "^2.27.7",
+    "@eslint/js": "^9.9.1",
+    "@types/node": "^22.5.0",
+    "borp": "^0.17.0",
+    "c8": "^10.1.2",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.9",
+    "prettier": "^3.3.3",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.3.0"
+  },
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
+}
