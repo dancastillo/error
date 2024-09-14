@@ -23,10 +23,11 @@ export function createError(code: ErrorCode | string, message: string, details: 
   /**
    * Return error as string
    *
+   * @param {string} formattedErrMessage - The formatted error message
    * @returns {string}
    */
-  function toString(): string {
-    return `${errName} [${errCode}]: ${errMessage}`
+  function toString(formattedErrMessage: string): string {
+    return `${errName} [${errCode}]: ${formattedErrMessage}`
   }
 
   /**
@@ -67,7 +68,7 @@ export function createError(code: ErrorCode | string, message: string, details: 
      * @returns {string}
      */
     toString(): string {
-      return toString()
+      return toString(this.message)
     }
   }
 

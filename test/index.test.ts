@@ -40,7 +40,7 @@ test('Create error :: non error code returns as UnknownError', (t) => {
   assert.strictEqual(err.message, 'Not available testing 123')
   assert.strictEqual(err.code, 'UNKNOWN')
   assert.strictEqual(err.statusCode, 500)
-  assert.strictEqual(err.toString(), 'UnknownError [UNKNOWN]: Not available')
+  assert.strictEqual(err.toString(), 'UnknownError [UNKNOWN]: Not available testing 123')
 })
 
 test('Missing error required arguements', (t) => {
