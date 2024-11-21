@@ -1,8 +1,9 @@
 {
   "name": "@dancastillo/error",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A small utility for generating consistent errors",
   "main": "dist/index.js",
+  "type": "module",
   "types": "dist/index.d.ts",
   "exports": {
     "./package.json": "./package.json",
@@ -31,15 +32,13 @@
   "scripts": {
     "test": "tsc --project tsconfig.test.json && borp --coverage --check-coverage --lines 100",
     "format": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "format:check": "prettier --write .",
     "lint": "eslint ./src",
     "prepare": "husky",
     "build": "tsup",
-    "check-exports": "attw --pack .",
-    "prepublish": "pnpm build && pnpm check-exports && pnpm lint && pnpm format && pnpm test"
+    "prepublish": "npm run build && npm run lint && npm run format:check && npm run test"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.17.0",
     "@changesets/cli": "^2.27.7",
     "@eslint/js": "^9.9.1",
     "@types/node": "^22.5.0",

@@ -1,76 +1,27 @@
-import { format } from 'node:util'
-import { transformCodeToErrorCode, transfromErrorCodeToErrorName, transfromErrorCodeToHttpStatusCode } from './helper'
-import { ErrorCode } from './types'
+import { DCError } from './types/dc-error.js'
 
 /**
- * Create error
- *
- * @param {ErrorCode | string} code - The error code of commonly thrown errors
- * @param {string} message - The error message
- * @param {string[]} details - Additional details
- * @param {number} statusCode - HTTP Status Code
- * @returns {Error} - The error object
+ * Create Custom Error
  */
-export function createError(code: ErrorCode | string, message: string, details: string[] = [], statusCode?: number) {
+export function createError<T = unknown>(
+  code: number | string,
+  message: string,
+  details: string[] = [],
+  meta?: T
+): DCError<T> {
   if (!code) throw new Error('Error code must not be empty')
   if (!message?.trim()) throw new Error('Error message must not be empty')
+  if (details && !Array.isArray(details)) throw new Error('Error details must be an array')
 
-  const errCode = transformCodeToErrorCode(code.toUpperCase())
-  const errName = transfromErrorCodeToErrorName(errCode)
-  const errStatusCode = statusCode ?? transfromErrorCodeToHttpStatusCode(errCode)
-  const errMessage = message.trim()
+  details.forEach((detail) => {
+    if (typeof detail !== 'string') throw new Error('Error details must contain string values')
+    if (!detail?.trim()) throw new Error('Error details must not contain empty string values')
+  })
 
-  /**
-   * Return error as string
-   *
-   * @param {string} formattedErrMessage - The formatted error message
-   * @returns {string}
-   */
-  function toString(formattedErrMessage: string): string {
-    return `${errName} [${errCode}]: ${formattedErrMessage}`
+  return {
+    message: message,
+    details: details,
+    code: code,
+    meta: meta,
   }
-
-  /**
-   * Base Error Class
-   */
-  class BaseError extends Error {
-    name: string
-    message: string
-    details: string[]
-    code: string
-    statusCode: number
-
-    /**
-     * Constructor
-     *
-     * @param {string} args.name - error name
-     * @param {string} args.message - error message
-     * @param {string[]} args.details - additional details
-     * @param {number} args.statusCode - optional parameter HTTP Status Code
-     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    constructor(...args: any[]) {
-      super(...args)
-      this.name = errName
-      this.message = format(errMessage, ...args)
-      this.details = details
-      this.code = errCode
-      this.statusCode = errStatusCode
-
-      // Ensuring stack trace is captured
-      if (Error.captureStackTrace) {
-        Error.captureStackTrace(this, BaseError)
-      }
-    }
-
-    /**
-     * Return error as string
-     * @returns {string}
-     */
-    toString(): string {
-      return toString(this.message)
-    }
-  }
-
-  return BaseError
 }
