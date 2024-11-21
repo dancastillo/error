@@ -1,6 +1,6 @@
 {
   "name": "@dancastillo/error",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A small utility for generating consistent errors",
   "main": "dist/index.js",
   "type": "module",
@@ -30,13 +30,13 @@
     "utility"
   ],
   "scripts": {
-    "test": "tsc --project tsconfig.test.json && borp --coverage --check-coverage --lines 100",
+    "test": "rm -rf dist && tsc --project tsconfig.test.json && borp --coverage --check-coverage --lines 100",
     "format": "prettier --check .",
     "format:check": "prettier --write .",
     "lint": "eslint ./src",
     "prepare": "husky",
-    "build": "tsup",
-    "prepublish": "npm run build && npm run lint && npm run format:check && npm run test"
+    "build": "rm -rf dist && tsup",
+    "prepublish": "npm run lint && npm run format:check && npm run test && npm run build"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
