@@ -30,7 +30,7 @@
     "utility"
   ],
   "scripts": {
-    "test": "tsc --project tsconfig.test.json && borp --coverage --check-coverage --lines 100",
+    "test": "rm -rf dist && tsc --project tsconfig.test.json && borp --coverage --check-coverage --lines 100",
     "format": "prettier --check .",
     "format:check": "prettier --write .",
     "lint": "eslint ./src",
