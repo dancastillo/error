@@ -1,4 +1,4 @@
-export type DCError<T> = {
+export type DCError<T = unknown> = {
   /**
    * The error message.
    */
