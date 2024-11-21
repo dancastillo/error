@@ -4,30 +4,46 @@ A small utility for generating consistent errors
 
 ### Install
 
+npm
+
 ```bash
 npm install @dancastillo/error
+```
+
+yarn
+
+```bash
+npm add @dancastillo/error
+```
+
+pnpm
+
+```bash
+pnpm install @dancastillo/error
 ```
 
 ### Usage
 
 ```
-createError(code, message [, details [, statusCode [, error]]])
+createError(code, message [, details [, meta]])
 ```
 
-- `code` (`string`, required) - The error code, you can access it via`error.code`. For consistency, it is recommended using [ErrorCode](./src/types/index.ts)
-- `message` (`string`, required) - The error message. This can be customized to use interpolated strings for formatting the message.
+- `code` (`number | string`, required) - The error code, you can access it via`error.code`. For http error, it is recommended using [ErrorCode](./src/types/http.types.ts)
+- `message` (`string`, required) - The error message.
 - `details` (`string[]`, optional) - The error details. You can include additional information about the error that has occurred. Default is an empty array.
-- `statusCode` (`number`, optional) - The status code that will be used if you want to sent via HTTP. Note this will be automatically populated based on the `code` you pass in
+- `meta` (`T`, optional) - Additional metadata that you can pass in with generic.
 
 ```js
-import createError from '@dancastillo/error
+import { createError, type DCError} from '@dancastillo/error
 
-const CreatedError = createError('INTERNAL_ERROR', 'Error happened')
+type Meta = { userId: string }
 
-const err = CreatedError()
+const err = createError<Meta>('INTERNAL_ERROR', 'Error happened', ['Details'], { userId: 'some-user-id' })
 
 console.log(err.code)    // 'INTERNAL_ERROR'
 console.log(err.message) // 'Error happened'
+console.log(err.details) // ['Details']
+console.log(err.meta) // { userId: 'some-user-id' }
 ```
 
 ## License
