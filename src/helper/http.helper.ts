@@ -1,9 +1,9 @@
-import { ErrorCode } from '../types/index'
+import { ErrorCode } from '../types/http.types.js'
 
 /**
  * Map error code string to ErrorCode
  */
-const CODE_STRING_TO_ERROR_CODE_MAP: Record<string, ErrorCode> = {
+export const CODE_STRING_TO_ERROR_CODE_MAP: Record<string, ErrorCode> = {
   INTERNAL_ERROR: ErrorCode.INTERNAL_ERROR,
   INVALID_ARGUMENT: ErrorCode.INVALID_ARGUMENT,
   INVALID_OPERATION: ErrorCode.INVALID_OPERATION,
@@ -33,7 +33,7 @@ export function transformCodeToErrorCode(code: string | ErrorCode): ErrorCode {
 /**
  * Map ErrorCode to error name
  */
-const ERROR_CODE_TO_ERROR_NAME_MAP: Record<ErrorCode, string> = {
+export const ERROR_CODE_TO_ERROR_NAME_MAP: Record<ErrorCode, string> = {
   [ErrorCode.INTERNAL_ERROR]: 'InternalError',
   [ErrorCode.INVALID_ARGUMENT]: 'InvalidArgumentError',
   [ErrorCode.INVALID_OPERATION]: 'InvalidOperationError',
@@ -56,14 +56,14 @@ const ERROR_CODE_TO_ERROR_NAME_MAP: Record<ErrorCode, string> = {
  * @param {ErrorCode} code - The error code of commonly thrown errors
  * @returns {string} - The error name of commonly thrown errors
  */
-export function transfromErrorCodeToErrorName(code: ErrorCode): string {
-  return ERROR_CODE_TO_ERROR_NAME_MAP[code] ?? ERROR_CODE_TO_ERROR_NAME_MAP[ErrorCode.UNKNOWN]
+export function transfromErrorCodeToErrorName(code: ErrorCode | string): string {
+  return ERROR_CODE_TO_ERROR_NAME_MAP[code as keyof typeof ErrorCode] ?? ERROR_CODE_TO_ERROR_NAME_MAP[ErrorCode.UNKNOWN]
 }
 
 /**
  * Map ErrorCode to HTTP status code
  */
-const ERROR_CODE_TO_HTTP_STATUS_CODE_MAP: Record<ErrorCode, number> = {
+export const ERROR_CODE_TO_HTTP_STATUS_CODE_MAP: Record<ErrorCode, number> = {
   [ErrorCode.INTERNAL_ERROR]: 500,
   [ErrorCode.INVALID_ARGUMENT]: 400,
   [ErrorCode.INVALID_OPERATION]: 400,
@@ -86,6 +86,9 @@ const ERROR_CODE_TO_HTTP_STATUS_CODE_MAP: Record<ErrorCode, number> = {
  * @param {ErrorCode} code - The error code of commonly thrown errors
  * @returns {number} - The HTTP status code of commonly thrown errors
  */
-export function transfromErrorCodeToHttpStatusCode(code: ErrorCode): number {
-  return ERROR_CODE_TO_HTTP_STATUS_CODE_MAP[code] ?? ERROR_CODE_TO_HTTP_STATUS_CODE_MAP[ErrorCode.UNKNOWN]
+export function transfromErrorCodeToHttpStatusCode(code: ErrorCode | string): number {
+  return (
+    ERROR_CODE_TO_HTTP_STATUS_CODE_MAP[code as keyof typeof ErrorCode] ??
+    ERROR_CODE_TO_HTTP_STATUS_CODE_MAP[ErrorCode.UNKNOWN]
+  )
 }

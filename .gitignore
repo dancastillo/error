@@ -137,3 +137,6 @@ package-lock.json
 
 # yarn dependencies
 yarn.lock
+
+# notes
+notes.txt
