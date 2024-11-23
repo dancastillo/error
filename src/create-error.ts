@@ -3,25 +3,22 @@ import { DCError } from './types/dc-error.js'
 /**
  * Create Custom Error
  */
-export function createError<T = unknown>(
-  code: number | string,
-  message: string,
-  details: string[] = [],
-  meta?: T
-): DCError<T> {
-  if (!code) throw new Error('Error code must not be empty')
-  if (!message?.trim()) throw new Error('Error message must not be empty')
-  if (details && !Array.isArray(details)) throw new Error('Error details must be an array')
+export function createError<T extends object>(code: number, title: string, detail: string, meta = {}): DCError<T> {
+  if (!code) throw new Error('Error: code must be passed in')
+  if (typeof code !== 'number') throw new Error('Error code must be of type number')
 
-  details.forEach((detail) => {
-    if (typeof detail !== 'string') throw new Error('Error details must contain string values')
-    if (!detail?.trim()) throw new Error('Error details must not contain empty string values')
-  })
+  if (!title) throw new Error('Error: title must be passed in')
+  if (typeof title !== 'string') throw new Error('Error: title must be of type string')
+  if (!title.trim()) throw new Error('Error: title must not be an empty string')
+
+  if (!detail) throw new Error('Error: detail must be passed in')
+  if (typeof detail !== 'string') throw new Error('Error: detail must be of type string')
+  if (!detail.trim()) throw new Error('Error: detail must not be an empty string')
 
   return {
-    message: message,
-    details: details,
+    title: title,
+    detail: detail,
     code: code,
-    meta: meta,
+    meta: meta as T,
   }
 }

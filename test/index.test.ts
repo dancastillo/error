@@ -1,114 +1,72 @@
 import test from 'node:test'
 import assert from 'node:assert'
-import { ErrorCode } from '../src/index.js'
-import {
-  CODE_STRING_TO_ERROR_CODE_MAP,
-  transformCodeToErrorCode,
-  transfromErrorCodeToErrorName,
-  transfromErrorCodeToHttpStatusCode,
-} from '../src/helper/http.helper.js'
 import { createError } from '../src/create-error.js'
+import { transformHttpErrorStatusCodeToErrorTitle } from '../src/helper/http-error.helper.js'
+
+const errorCodes = [400, 401, 403, 404, 405, 408, 429, 500, 501, 503, 504]
 
 // Loop over all Error codes
-for (const code of Object.keys(ErrorCode)) {
-  const name = transfromErrorCodeToErrorName(code as ErrorCode)
-  const message = transfromErrorCodeToErrorName(code as ErrorCode)
+for (const code of errorCodes) {
+  const title = transformHttpErrorStatusCodeToErrorTitle(code)
+  const detail = 'Testing error'
 
-  test(`Create Http error with ${code}, ${message}, and details`, (t) => {
-    const createdError = createError(code, message, [name, message])
-    // assert.ok(createdError instanceof DCError)
-    assert.strictEqual(createdError.message, message)
-    assert.deepStrictEqual(createdError.details, [name, message])
+  test(`Create Http error with ${code}, ${title}, and details`, (t) => {
+    const createdError = createError(code, title, detail)
     assert.strictEqual(createdError.code, code)
+    assert.strictEqual(createdError.title, title)
+    assert.strictEqual(createdError.detail, detail)
+    assert.deepStrictEqual(createdError.meta, {})
   })
 }
 
-test('Create error :: non error code returns as UnknownError', (t) => {
-  const createdError = createError(5000, 'Not available', [], { statusCode: 500 })
+test('Create error :: Passed in typed meta object', (t) => {
+  const createdError = createError(5000, 'Not available', 'Detail', { statusCode: 500 })
   // const err = createdError('testing 123')
-  assert.strictEqual(createdError.message, 'Not available')
+  assert.strictEqual(createdError.title, 'Not available')
   assert.strictEqual(createdError.code, 5000)
-  assert.deepStrictEqual(createdError.details, [])
+  assert.deepStrictEqual(createdError.detail, 'Detail')
   assert.deepStrictEqual(createdError.meta, { statusCode: 500 })
 })
 
-test('Fail when details is not an array', (t) => {
-  // @ts-expect-error - details is not a string array
-  assert.throws(() => createError(4000, 'fail', true), new Error('Error details must be an array'))
+test('Fail when code is not passed in', (t) => {
+  // @ts-expect-error - code is not number
+  assert.throws(() => createError(), new Error('Error: code must be passed in'))
 })
 
-test('When details is not a string array', (t) => {
-  // @ts-expect-error - details is not a string array
-  assert.throws(() => createError(4000, 'fail', [true, false]), new Error('Error details must contain string values'))
+test('Fail when code is not a number', (t) => {
+  // @ts-expect-error - code is empty
+  assert.throws(() => createError('test'), new Error('Error code must be of type number'))
 })
 
-test('When empty string is passed as details', (t) => {
-  assert.throws(() => createError(4000, 'fail', ['']), new Error('Error details must not contain empty string values'))
+test('Fail when title is not passed in', (t) => {
+  // @ts-expect-error - title is not number
+  assert.throws(() => createError(500), new Error('Error: title must be passed in'))
 })
 
-test('Missing error required arguements', (t) => {
-  // @ts-expect-error - testing missing error code
-  assert.throws(() => createError(), new Error('Error code must not be empty'))
+test('Fail when title is not a string', (t) => {
+  // @ts-expect-error - title is empty
+  assert.throws(() => createError(500, 500), new Error('Error: title must be of type string'))
 })
 
-test('Missing error code', (t) => {
-  // @ts-expect-error - testing missing error code
-  assert.throws(() => createError(undefined, 'Test'), new Error('Error code must not be empty'))
+test('Fail when title is an empty string', (t) => {
+  // @ts-expect-error - title is not number
+  assert.throws(() => createError(500, '  '), new Error('Error: title must not be an empty string'))
 })
 
-test('Missing error message', (t) => {
-  // @ts-expect-error - testing missing error code
-  assert.throws(() => createError('Test'), new Error('Error message must not be empty'))
+test('Fail when detail is not passed in', (t) => {
+  // @ts-expect-error - detail is not number
+  assert.throws(() => createError(500, 'title'), new Error('Error: detail must be passed in'))
 })
 
-test('Return UnknownError when error code is not found', (t) => {
-  const errorName = transfromErrorCodeToErrorName('INVALID_ERROR_CODE_HERE_TEST')
-  assert.strictEqual('UnknownError', errorName)
+test('Fail when detail is not a string', (t) => {
+  // @ts-expect-error - detail is empty
+  assert.throws(() => createError(500, 'title', true), new Error('Error: detail must be of type string'))
 })
 
-test('Return 500 when error code is not found', (t) => {
-  const errorHttpCode = transfromErrorCodeToHttpStatusCode('INVALID_ERROR_CODE_HERE_TEST')
-  assert.strictEqual(500, errorHttpCode)
+test('Fail when detail is an empty string', (t) => {
+  assert.throws(() => createError(500, 'title', '  '), new Error('Error: detail must not be an empty string'))
 })
 
-test('transformCodeToErrorCode: valid code string', () => {
-  const result = transformCodeToErrorCode('INTERNAL_ERROR')
-  assert.strictEqual(result, ErrorCode.INTERNAL_ERROR)
-})
-
-test('transformCodeToErrorCode: invalid code string defaults to UNKNOWN', () => {
-  const result = transformCodeToErrorCode('INVALID_CODE')
-  assert.strictEqual(result, ErrorCode.UNKNOWN)
-})
-
-test('transformCodeToErrorCode: valid ErrorCode', () => {
-  const result = transformCodeToErrorCode(ErrorCode.NOT_FOUND)
-  assert.strictEqual(result, ErrorCode.NOT_FOUND)
-})
-
-test('transfromErrorCodeToErrorName: valid ErrorCode', () => {
-  const result = transfromErrorCodeToErrorName(ErrorCode.NOT_FOUND)
-  assert.strictEqual(result, 'NotFoundError')
-})
-
-test('transfromErrorCodeToErrorName: invalid ErrorCode defaults to UnknownError', () => {
-  const result = transfromErrorCodeToErrorName('INVALID_CODE')
-  assert.strictEqual(result, 'UnknownError')
-})
-
-test('transfromErrorCodeToHttpStatusCode: valid ErrorCode', () => {
-  const result = transfromErrorCodeToHttpStatusCode(ErrorCode.NOT_FOUND)
-  assert.strictEqual(result, 404)
-})
-
-test('transfromErrorCodeToHttpStatusCode: invalid ErrorCode defaults to 500', () => {
-  const result = transfromErrorCodeToHttpStatusCode('INVALID_CODE')
-  assert.strictEqual(result, 500)
-})
-
-test('CODE_STRING_TO_ERROR_CODE_MAP: all keys map correctly', () => {
-  for (const [key, value] of Object.entries(CODE_STRING_TO_ERROR_CODE_MAP)) {
-    const transformed = transformCodeToErrorCode(key)
-    assert.strictEqual(transformed, value)
-  }
+test('Throw when unknown status code is not passed in', (t) => {
+  assert.throws(() => transformHttpErrorStatusCodeToErrorTitle(888), new Error('Invalid status code'))
 })

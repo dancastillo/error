@@ -25,24 +25,39 @@ pnpm install @dancastillo/error
 ### Usage
 
 ```
-createError(code, message [, details [, meta]])
+createError(code, message [, detail [, meta]])
 ```
 
-- `code` (`number | string`, required) - The error code, you can access it via`error.code`. For http error, it is recommended using [ErrorCode](./src/types/http.types.ts)
+- `code` (`number`, required) - The error code, you can access it via`error.code`.
 - `message` (`string`, required) - The error message.
-- `details` (`string[]`, optional) - The error details. You can include additional information about the error that has occurred. Default is an empty array.
-- `meta` (`T`, optional) - Additional metadata that you can pass in with generic.
+- `detail` (`string[]`, optional) - The error detail. You can include additional information about the error that has occurred.
+- `meta` (`T extends object`, optional) - Additional metadata object that you can pass in with generic.
 
-```js
-import { createError, type DCError} from '@dancastillo/error
+#### TypeScript Example
+
+```ts
+import { createError, type DCError } from '@dancastillo/error'
 
 type Meta = { userId: string }
 
-const err = createError<Meta>('INTERNAL_ERROR', 'Error happened', ['Details'], { userId: 'some-user-id' })
+const err = createError<Meta>(500, 'Title', 'Detail', { userId: 'some-user-id' })
 
-console.log(err.code)    // 'INTERNAL_ERROR'
-console.log(err.message) // 'Error happened'
-console.log(err.details) // ['Details']
+console.log(err.code) // 500
+console.log(err.title) // 'Title'
+console.log(err.detail) // 'Detail'
+console.log(err.meta) // { userId: 'some-user-id' }
+```
+
+#### JavaScript Example
+
+```js
+import { createError } from '@dancastillo/error'
+
+const err = createError(500, 'Title', 'Detail', { userId: 'some-user-id' })
+
+console.log(err.code) // 500
+console.log(err.title) // 'Title'
+console.log(err.detail) // 'Detail'
 console.log(err.meta) // { userId: 'some-user-id' }
 ```
 

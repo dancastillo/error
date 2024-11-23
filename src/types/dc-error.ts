@@ -1,21 +1,21 @@
-export type DCError<T = unknown> = {
+export type DCError<T extends object> = {
   /**
-   * The error message.
+   * The error code. Businesss or HTTP status code.
    */
-  message: string
+  code: number
 
   /**
-   * Additional details about the error.
+   * The error title.
    */
-  details: string[]
+  title: string
 
   /**
-   * The error code, typically uppercase and standardized.
+   * The error detail.
    */
-  code: number | string
+  detail: string
 
   /**
-   * Additional metadata about the error.
+   * Additional metadata object about the error.
    */
-  meta?: T
+  meta: T
 }
