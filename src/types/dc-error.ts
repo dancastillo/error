@@ -1,4 +1,5 @@
-export type DCError<T extends object> = {
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export type DCError<T extends object = {}> = {
   /**
    * The error code. Businesss or HTTP status code.
    */

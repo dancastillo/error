@@ -1,6 +1,6 @@
 {
   "name": "@dancastillo/error",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A small utility for generating consistent errors",
   "main": "dist/index.js",
   "type": "module",
